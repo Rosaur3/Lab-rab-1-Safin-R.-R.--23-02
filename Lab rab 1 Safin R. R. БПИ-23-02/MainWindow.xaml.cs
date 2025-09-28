@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 
 namespace Lab_rab_1_Safin_R.R.БПИ_23_02
-{ 
+{
     public partial class MainWindow : Window
     {
         public MainWindow()
