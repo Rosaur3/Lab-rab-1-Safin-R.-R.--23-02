@@ -32,6 +32,6 @@
                 Padding="10" Click="CalculateButton_Click"/>
 
         <TextBlock x:Name="AgeTextBlock" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" FontSize="16" HorizontalAlignment="Center"/>
-        <TextBlock x:Name="DaysTo50TextBlock" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" FontSize="16" HorizontalAlignment="Center"/>
+        <TextBlock x:Name="DaysTextBlock" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" FontSize="16" HorizontalAlignment="Center"/>
     </Grid>
 </Window>

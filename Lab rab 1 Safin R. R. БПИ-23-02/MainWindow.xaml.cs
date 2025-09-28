@@ -7,6 +7,13 @@ namespace Lab_rab_1_Safin_R.R.БПИ_23_02
 {
     public partial class MainWindow : Window
     {
+        public Validate validation { get; set; } = new Validate();
+        public Aged aged { get; set; } = new Aged();
+        public static void ShowWarning(string message, string title = "Ошибка")
+        {
+            MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -14,11 +21,7 @@ namespace Lab_rab_1_Safin_R.R.БПИ_23_02
 
         private void SurnameTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            Regex regex = new Regex(@"^[\p{L}]+$");
-            if (!regex.IsMatch(e.Text))
-            {
-                e.Handled = true;
-            }
+            e.Handled = !validation.IsTextAllowed(e.Text);
         }
 
         private void CalculateButton_Click(object sender, RoutedEventArgs e)
@@ -27,37 +30,30 @@ namespace Lab_rab_1_Safin_R.R.БПИ_23_02
             string salaryText = SalaryTextBox.Text.Trim();
             DateTime? birthDate = BirthDatePicker.SelectedDate;
 
-            if (string.IsNullOrWhiteSpace(surname)  ||string.IsNullOrWhiteSpace(salaryText)|| !birthDate.HasValue)
+            if (!validation.AreFieldsFilled(surname, salaryText, birthDate.HasValue))
             {
-                MessageBox.Show("Пожалуйста, заполните все поля.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowWarning("Пожалуйста, заполните все поля.");
                 return;
             }
 
-            if (!decimal.TryParse(salaryText, out decimal salary))
+            if (!validation.TryParseSalary(salaryText, out decimal salary))
             {
-                MessageBox.Show("Оклад должен быть числом.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowWarning("Оклад должен быть числом.");
                 SalaryTextBox.Focus();
                 return;
             }
 
-            DateTime today = DateTime.Today;
+            var result = aged.CalculateAgeAndDaysTo50(birthDate.Value, DateTime.Today);
 
-            int age = today.Year - birthDate.Value.Year;
-            if (birthDate.Value.Date > today.AddYears(-age)) age--; 
+            AgeTextBlock.Text = $"Возраст: {result.Age} лет";
 
-            DateTime fiftiethBirthday = birthDate.Value.AddYears(50);
-            TimeSpan daysTo50 = fiftiethBirthday - today;
-            int days = daysTo50.Days;
-
-            if (days < 0)
+            if (result.IsFiftiethPassed)
             {
-                AgeTextBlock.Text = $"Возраст: {age} лет";
-                DaysTo50TextBlock.Text =  $"50-летие было {-days} дней назад";
+                DaysTextBlock.Text = $"50-летие было {-result.DaysToFiftieth} дней назад";
             }
             else
             {
-                AgeTextBlock.Text = $"Возраст: {age} лет";
-                DaysTo50TextBlock.Text = $"До 50-летия: {days} дней";
+                DaysTextBlock.Text = $"До 50-летия: {result.DaysToFiftieth} дней";
             }
         }
     }
